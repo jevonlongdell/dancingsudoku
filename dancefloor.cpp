@@ -40,12 +40,9 @@ DanceFloor::DanceFloor(std::vector<int> labels){
 
 void DanceFloor::addGivenSudokuRow(int *rowData,int row, int col, int digit){
   int k;
-  //  cout<<"in addSudokuRowgiven"<<endl;
-
   assert(givenCount==rowCount);
   givenCount++;
   addSudokuRow(rowData,row,col,digit);
-
   for(k=0;k<4;k++){
         givenCols.push_back(rowData[k]);
   }
@@ -177,7 +174,7 @@ void DanceFloor::solve(int max_sols){
 
   }
   catch(MaxSolnsExceeded){
-    std::cout<<"That's too many solutions I'm giving up looking for more"<<endl;
+    std::cout<<"That's enough solutions for me I'm giving up looking for more"<<endl;
   }
   
   
@@ -210,7 +207,7 @@ void DanceFloor::search(){
     for(colScan=(ColumnNode*)root.getRight();//.getRight();
 	colScan!=&root;
 	colScan=(ColumnNode*)colScan->getRight()){
-      if(colScan->getSize()<=min||min<0){
+      if(min<0||colScan->getSize()<=min){
 	min=colScan->getSize();
 	c = colScan;       
       }
@@ -223,18 +220,18 @@ void DanceFloor::search(){
     if(print_explain){
       if (min>1)
 	cout<<"A bit stuck guessing that:"<<endl<<"\t";
-if(min>0){
-    //print description
-    Node* nd = c->getDown();
-    if(c->getLabel()<81)
-      cout<<"A "<<nd->getRowdat()->getDigit()<<" is the only option for the square ("<<nd->getRowdat()->getRow()<<","<<nd->getRowdat()->getCol()<<")"<<endl;
-    else if(c->getLabel()<2*81 )
-      cout<<"The only way to get a "<<nd->getRowdat()->getDigit()<<" in row "<<nd->getRowdat()->getRow()<<" is in col "<<nd->getRowdat()->getCol()<<"."<<endl;
-    else if(c->getLabel()<3*81 )
-      cout<<"The only way to get a "<<nd->getRowdat()->getDigit()<<" in col "<<nd->getRowdat()->getCol()<<" is in row "<<nd->getRowdat()->getRow()<<"."<<endl;
-    else 
-      cout<<"A "<<nd->getRowdat()->getDigit()<<" is needed at ("<<nd->getRowdat()->getRow()<<","<<nd->getRowdat()->getCol()<<") because that box must have a "<<nd->getRowdat()->getDigit()<<endl;
-    }
+      if(min>0){
+	//print description
+	Node* nd = c->getDown();
+	if(c->getLabel()<81)
+	  cout<<"A "<<nd->getRowdat()->getDigit()<<" is the only option for the square ("<<nd->getRowdat()->getRow()<<","<<nd->getRowdat()->getCol()<<")"<<endl;
+	else if(c->getLabel()<2*81 )
+	  cout<<"The only way to get a "<<nd->getRowdat()->getDigit()<<" in row "<<nd->getRowdat()->getRow()<<" is in col "<<nd->getRowdat()->getCol()<<"."<<endl;
+	else if(c->getLabel()<3*81 )
+	  cout<<"The only way to get a "<<nd->getRowdat()->getDigit()<<" in col "<<nd->getRowdat()->getCol()<<" is in row "<<nd->getRowdat()->getRow()<<"."<<endl;
+	else 
+	  cout<<"A "<<nd->getRowdat()->getDigit()<<" is needed at ("<<nd->getRowdat()->getRow()<<","<<nd->getRowdat()->getCol()<<") because that box must have a "<<nd->getRowdat()->getDigit()<<endl;
+      }
     }
 
     hideColumn(c);

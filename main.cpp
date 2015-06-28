@@ -36,37 +36,6 @@ int main(int argc,char **argv){
   gettimeofday(&tv,NULL);
   srand(tv.tv_sec+tv.tv_usec);
 
-  /*  ncols=4;
-  
-  labels.resize(ncols);
-  for(i=0;i<ncols;i++)
-    labels[i]=i;
-  
-  DanceFloor df(labels);
-  
-  vector<int> rowdat1;
-  rowdat1.push_back(1);
-  rowdat1.push_back(1);
-  rowdat1.push_back(0);
-  rowdat1.push_back(0);
-  
-  vector<int> rowdat2;
-  rowdat2.push_back(0);
-  rowdat2.push_back(0);
-  rowdat2.push_back(1);
-  rowdat2.push_back(1);
-
-    df.addRow(rowdat1);
-    df.addRow(rowdat2);
-    df.addRow(rowdat1);
-    df.addRow(rowdat1);
-    df.addRow(rowdat1);
-
-
-  df.solveRand(10);
-
-  return 0;*/
-
 
   //set up dancefloor
   ncols = 4*puzzle_size*
