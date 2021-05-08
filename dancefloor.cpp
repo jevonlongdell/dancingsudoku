@@ -7,6 +7,8 @@ using namespace std;
 
 struct MaxSolnsExceeded {};
 
+//labels is an array 0..323 that gives the indices for the columns
+
 DanceFloor::DanceFloor(std::vector<int> labels){
 
   unsigned int i;
@@ -16,8 +18,9 @@ DanceFloor::DanceFloor(std::vector<int> labels){
   givenCount=0;
   columns.resize(labels.size());
   givenCols.resize(0);
-  print_explain=1; //do print explainations
+  print_explain=0; //do print explainations
 
+  //cout<<"Labels.size() = "<<labels.size()<<endl;
   for(i=0;i<labels.size();i++){
     columns[i].setLabel(i);
     columns[i].setSize(0);
@@ -38,11 +41,11 @@ DanceFloor::DanceFloor(std::vector<int> labels){
 }
 
 
-void DanceFloor::addGivenSudokuRow(int *rowData,int row, int col, int digit){
+void DanceFloor::addGivenSudokuRow(int *rowData,int puzzleboard_row, int puzzleboard_col, int digit){
   int k;
   assert(givenCount==rowCount);
   givenCount++;
-  addSudokuRow(rowData,row,col,digit);
+  addSudokuRow(rowData,puzzleboard_row,puzzleboard_col,digit);
   for(k=0;k<4;k++){
         givenCols.push_back(rowData[k]);
   }
@@ -50,12 +53,12 @@ void DanceFloor::addGivenSudokuRow(int *rowData,int row, int col, int digit){
 }
 
 
-void DanceFloor::addSudokuRow(int *rowData, int row, int col, int digit){
+void DanceFloor::addSudokuRow(int *rowData, int puzzleboard_row, int puzzleboard_col, int digit){
   int k;
   Node *n[4];
   Rowdat* rdat;
   //  cout<<"in addSudokuRow"<<endl;
-  rdat = new Rowdat(rowCount,row,col,digit);
+  rdat = new Rowdat(rowCount,puzzleboard_row,puzzleboard_col,digit);
 
   for(k=0;k<4;k++)
     n[k] = new Node(rowCount,rowData[k],rdat);
@@ -205,11 +208,11 @@ void DanceFloor::search(){
     //choose a column to hide
     min = -1;
     for(colScan=(ColumnNode*)root.getRight();//.getRight();
-	colScan!=&root;
-	colScan=(ColumnNode*)colScan->getRight()){
+    	    colScan!=&root;
+	        colScan=(ColumnNode*)colScan->getRight()){
       if(min<0||colScan->getSize()<=min){
-	min=colScan->getSize();
-	c = colScan;       
+	      min=colScan->getSize();
+	      c = colScan;       
       }
     }
 
@@ -219,18 +222,20 @@ void DanceFloor::search(){
 
     if(print_explain){
       if (min>1)
-	cout<<"A bit stuck guessing that:"<<endl<<"\t";
+	      cout<<"A bit stuck guessing that:"<<endl<<"\t";
       if(min>0){
-	//print description
-	Node* nd = c->getDown();
-	if(c->getLabel()<81)
-	  cout<<"A "<<nd->getRowdat()->getDigit()<<" is the only option for the square ("<<nd->getRowdat()->getRow()<<","<<nd->getRowdat()->getCol()<<")"<<endl;
-	else if(c->getLabel()<2*81 )
-	  cout<<"The only way to get a "<<nd->getRowdat()->getDigit()<<" in row "<<nd->getRowdat()->getRow()<<" is in col "<<nd->getRowdat()->getCol()<<"."<<endl;
-	else if(c->getLabel()<3*81 )
-	  cout<<"The only way to get a "<<nd->getRowdat()->getDigit()<<" in col "<<nd->getRowdat()->getCol()<<" is in row "<<nd->getRowdat()->getRow()<<"."<<endl;
-	else 
-	  cout<<"A "<<nd->getRowdat()->getDigit()<<" is needed at ("<<nd->getRowdat()->getRow()<<","<<nd->getRowdat()->getCol()<<") because that box must have a "<<nd->getRowdat()->getDigit()<<endl;
+	      //print description
+	      Node* nd = c->getDown();
+	      if(c->getLabel()<81)
+	        cout<<"A "<<nd->getRowdat()->getDigit()<<" is the only option for the square ("<<nd->getRowdat()->getRow()<<","<<nd->getRowdat()->getCol()<<")"<<endl;
+	      else 
+          if(c->getLabel()<2*81 )
+	          cout<<"The only way to get a "<<nd->getRowdat()->getDigit()<<" in row "<<nd->getRowdat()->getRow()<<" is in col "<<nd->getRowdat()->getCol()<<"."<<endl;
+	        else 
+            if(c->getLabel()<3*81 )
+	            cout<<"The only way to get a "<<nd->getRowdat()->getDigit()<<" in col "<<nd->getRowdat()->getCol()<<" is in row "<<nd->getRowdat()->getRow()<<"."<<endl;
+	          else 
+	            cout<<"A "<<nd->getRowdat()->getDigit()<<" is needed at ("<<nd->getRowdat()->getRow()<<","<<nd->getRowdat()->getCol()<<") because that box must have a "<<nd->getRowdat()->getDigit()<<endl;
       }
     }
 
@@ -239,16 +244,16 @@ void DanceFloor::search(){
     for(r=c->getDown();r!=c;r=r->getDown()){
       solution.push_back(r);
       for(j=r->getRight();j!=r;j=j->getRight()){
-	hideColumn((ColumnNode*)j->getColumn());
+	      hideColumn((ColumnNode*)j->getColumn());
       }
       search();
       solution.pop_back();
       for(j=r->getLeft();j!=r;j=j->getLeft()){
-	unhideColumn((ColumnNode*)j->getColumn());
+	      unhideColumn((ColumnNode*)j->getColumn());
       }
     }
-      if(print_explain && min>1)
-	cout<<"Nowhere more to go, forgetting that last guess."<<endl;
+    if(print_explain && min>1)
+	    cout<<"Nowhere more to go, forgetting that last guess."<<endl;
     unhideColumn(c);
   }
 }

@@ -1,4 +1,4 @@
-CXXFLAGS=-Wall -g
+CXXFLAGS=-Wall -g -O3
 
 dance: main.o node.o column_node.o dancefloor.o rowdat.o
 	g++ node.o main.o column_node.o dancefloor.o rowdat.o -o dance

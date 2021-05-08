@@ -7,7 +7,7 @@
 class DanceFloor
 {
 public:
-  DanceFloor(std::vector<int> labels);
+  DanceFloor(std::vector<int> labels); //labels 1..9 by default
   ColumnNode getFirstColumn();
   void addSudokuRow(int*,int,int,int);
   void addGivenSudokuRow(int*,int,int,int);
