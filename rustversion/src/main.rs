@@ -25,14 +25,6 @@ struct Node{
 
 
 
-
-
-
-
-
-
-
-
 // reads in a puzzle description from a text file
 // returns is at as an 81 element array of u8's
 // if the value is unknown it records that as a zero
@@ -71,7 +63,11 @@ fn hidenode(n: usize, m: &mut Vec<Node>) {
     println!("Hiding node {}",n);
     let l = m[n].left;
     let r = m[n].right;
-    assert_ne!(l,r);
+    println!("{} {:?}",n,m[n]);
+    println!("L {} {:?}",l,m[l]);
+    println!("R {} {:?}",r,m[r]);
+    
+    //assert_ne!(l,r);
     m[l].right = r; 
     m[r].left = l; 
 }
@@ -80,7 +76,7 @@ fn hidenode(n: usize, m: &mut Vec<Node>) {
 fn unhidenode(n: usize, m: &mut Vec<Node>) {
     let l = m[n].left;
     let r = m[n].right;
-    assert_ne!(l,r);
+    //assert_ne!(l,r);
     m[l].right = n; 
     m[r].left = n; 
 }
@@ -88,16 +84,20 @@ fn unhidenode(n: usize, m: &mut Vec<Node>) {
 
 
 fn hidecolumn (col: usize, m: &mut Vec<Node>){
-    let n = col;
-    let mut count=0;
+    let mut n = col;
+//    println!("Column is {}",n);
+//    let mut count=0;
     loop{
+//	println!("n = {}",n);
         hidenode(n, m);
-        let n = m[n].down;
+        n = m[n].down;
+//	println!("n = {}",n);
         if n==col{
+//	   println!("This column is done");
             break;
         }
-        count+=1;
-        assert!(count<5);
+//        count+=1;
+//        assert!(count<5);
     }
 
 }
@@ -212,11 +212,10 @@ fn main() {
                     m[oldbottom].down=k+i;
                     m[*c].up = k+i;
                     m.push(n);
-                    println!("{} {:?}",n, m[n]);
-                    println!("{} {:?}",*c, m[*C]);
+                    println!("{} {:?}",k+i, m[k+i]);
+                    println!("{} {:?}",*c, m[*c]);
                     
                 }
-                println!("k={}",k)
             }
         }
     }
@@ -246,7 +245,6 @@ fn main() {
                         m[*c].up = k+i+1;
                         m.push(n);
                     }
-                println!("k={}",k)
                 }
             }
         }
@@ -264,18 +262,18 @@ fn main() {
     m.push(rootnode);
 
     //lets solve this sucker
-
+    println!("root = {}",root);
 
     //loop all the elements in the solution rows and hide
     // the corresponding columns
 
     for first_node_in_row in soln.iter() {
-        let n = *first_node_in_row;
+        let mut n = *first_node_in_row;
         let mut count = 0;
         loop {
             let col = m[n].colidx;
             hidecolumn(col, &mut m);
-            let n = m[n].right;
+            n = m[n].right;
             if n==*first_node_in_row{
                 break;
             }
